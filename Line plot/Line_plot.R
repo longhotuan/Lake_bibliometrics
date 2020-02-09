@@ -47,6 +47,7 @@ myfiles <- lapply(temp, read.csv, sep = "\t")
 
 temp2 <- str_match(string = temp, pattern = "\\_(.*?)\\.")[,2]
 temp3 <- str_match(string = temp, pattern = "(.*?)\\_")[,2]
+temp3 <- paste(temp3, "s", sep = "")
 
 
 myfiles <- map2(myfiles, temp2, function(x, y) {x$Country <- y; return(x)})
@@ -64,25 +65,19 @@ factor_convert <- function(x){
 }
 
 sdg6 <- factor_convert(sdg6)
-myfiles <- lapply(myfiles, factor_convert)
-
-be_countries <- sdg6 %>% filter(Country %in% c("Belgium", "France", "Germany", "Netherlands", "UK"))
-sdg6_world <- sdg6 %>% filter(!Country %in% c("Belgium", "France", "Germany", "Netherlands", "UK", "Global"))
 
 ggsave("lake_country.tiff", ggplot(sdg6, aes(x = YEAR, y = n, color = Country, group = Country)) +
            geom_point(size = 1) +
-           geom_line(size = 1.5
-                     # , linetype = sdg6$Type
-                     ) +
-           theme_minimal() +
+           geom_line(size = 1.5) +
+           theme_bw() +
            xlab("Year") +
            ylab("Number of publications") +
            scale_x_discrete(breaks = seq(1955,2020, 10)) +
            facet_wrap(.~Type, scales = "free") +
            scale_color_brewer(palette = 'Set1') +
-           theme(text=element_text(family = "Arial")) +
-           theme(axis.text.x = element_text(size = 14)) +
-           theme(axis.text.y = element_text(size = 14)) +
+           theme(text=element_text(family = "Arial", size = 14)) +
+           # theme(axis.text.x = element_text(size = 14)) +
+           # theme(axis.text.y = element_text(size = 14)) +
            theme(axis.title = element_text(size = 14)) +
            theme(legend.title = element_blank()) +
            theme(legend.text = element_text(size = 14)),
